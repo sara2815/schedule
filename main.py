@@ -65,8 +65,7 @@ app = Flask(__name__)
 COURSE_CODES = [
     "6600", "6601", "6602", "6604", "6610", "6612", "6603", "6607", "6608", "6609",
     "6620", "6661", "6662", "6695", "6618", "6628", "6658", "6676", "6706", "6709",
-    "6747", "6632", "6651", "6677", "6700", "6637", "6638", "6639", "6654", "6697",
-    "6700b", "6701", "6735", "6830", "6831"
+    "6747", "6632", "6651", "6677", "6700", "6637", "6638", "6639", "6654", "6697", "6701", "6735", "6830", "6831"
 ]
 
 @app.route('/', methods=['GET', 'POST'])
@@ -107,8 +106,12 @@ def parse_faculty_schedule(filename, course_limits):
     prof_assignment_count = defaultdict(int)
 
     for course, eligible_profs in course_to_profs.items():
+        course_limit = course_limits.get(course, 0)  # default to 3 if not specified
+        if course_limit == 0:
+                print(f"⚠️ Skipping course {course}: limit is 0.")
+                continue 
         assigned = []
-        course_limit = course_limits.get(course, 3)  # default to 3 if not specified
+
         for prof in eligible_profs:
             if prof_assignment_count[prof] < 4 and len(assigned) < course_limit:
                 assigned.append(prof)
